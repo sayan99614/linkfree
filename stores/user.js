@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
-  state: () => ({}),
+  state: () => ({
+    updatedLinkId:0
+  }),
   actions: {},
 });

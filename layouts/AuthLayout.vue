@@ -17,12 +17,29 @@
     </div>
     <div class="lg:block hidden w-1/3 pointer-events-none">
       <img
+        v-if="route.path === '/'"
         src="~/assets/images/side1.png"
+        alt="auth-bg"
+        class="w-full h-screen object-cover select-none"
+      />
+      <img
+        v-else
+        src="~/assets/images/side2.png"
         alt="auth-bg"
         class="w-full h-screen object-cover select-none"
       />
     </div>
   </div>
 </template>
-<script setup></script>
+<script setup>
+const userStore = useUserStore();
+const user = storeToRefs(userStore);
+const route = useRoute();
+
+const { updatedLinkId } = user;
+
+onMounted(() => {
+  updatedLinkId.value = 0;
+});
+</script>
 <style scoped></style>

@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.inp {
+  background-color: rgb(245, 246, 244);
+  height: 2.4rem;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 1.5rem 1.2rem;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.inp:focus::placeholder {
+  transition: all 0.3s;
+  font-size: 0.8rem;
+  transform: translateY(-0.6rem);
+  margin-bottom: 1rem;
+}
+
+.login__btn {
+  @apply w-full bg-[#e0e2d9] p-3 rounded-full font-bold;
+}
+
+.inactive {
+  color: #d2bea7;
+}
