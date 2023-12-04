@@ -10,6 +10,7 @@
   padding: 1.5rem 1.2rem;
   font-size: 1rem;
   transition: all 0.3s;
+  width: 100%;
 }
 
 .inp:focus::placeholder {
@@ -25,4 +26,12 @@
 
 .inactive {
   color: #d2bea7;
+}
+
+.has_email_password {
+  @apply bg-[#8129d9] text-white;
+}
+
+.has_email_password:hover {
+  @apply bg-[#6c1fc8];
 }
