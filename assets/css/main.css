@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #f3f3f1;
+}
+
 .inp {
   background-color: rgb(245, 246, 244);
   height: 2.4rem;
