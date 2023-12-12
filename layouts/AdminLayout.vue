@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full fixed z-30">
+  <div class="w-full z-30">
     <div
       v-if="!userStore.isMobile"
       class="w-full flex items-center justify-between md:pt-2.5 md:px-2"
@@ -101,6 +101,7 @@
         </NuxtLink>
       </div>
     </div>
+    <slot></slot>
   </div>
 </template>
 <script setup>
