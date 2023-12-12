@@ -49,7 +49,7 @@
 </template>
 <script setup>
 import AuthLayout from "~/layouts/AuthLayout.vue";
-import TextInput from "~/assets/components/TextInput.vue";
+import TextInput from "~/components/TextInput.vue";
 import InputValidator from "~/utils/Validator.js";
 
 const email = ref({
