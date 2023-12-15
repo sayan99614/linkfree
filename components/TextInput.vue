@@ -29,7 +29,5 @@ const inputComputedValue = computed({
   get: () => props.value,
   set: (value) => emit("update:value", value),
 });
-
-console.log("error", props.error);
 </script>
 <style scoped></style>

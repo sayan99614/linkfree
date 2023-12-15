@@ -43,17 +43,6 @@
               @create-link-url="createLink"
             />
 
-            <template v-for="link in links" :key="link.id">
-              <LinkCard
-                :id="link.id"
-                :link="link.url"
-                :should-show="link.shouldShow"
-                @change-link-visibility="
-                  () => (link.shouldShow = !link.shouldShow)
-                "
-                @delete-link="() => links.splice(links.indexOf(link), 1)"
-              />
-            </template>
             <div class="self-start">
               <button
                 class="flex gap-3 bg-gray-200 w-full py-3 rounded-full px-8"
@@ -63,35 +52,39 @@
                 Add header
               </button>
             </div>
-
-            <div
-              class="w-full bg-gray-100 shadow-md p-8 pb-4 rounded-2xl grid grid-cols-[10%_60%_30%] items-center lg:gap-12 mt-5"
-              v-for="header in headers"
-              :key="header.id"
-            >
-              <Icon name="mdi:dots-grid" size="24" />
-              <input
-                type="text"
-                class="bg-gray-100 border-none outline-none text-center"
-                placeholder="Title"
-                v-model="header.title"
+            <template v-for="(item, index) in PreviewItems">
+              <LinkCard
+                v-if="item.type === 'LINK'"
+                :id="item.id"
+                :link="item.url"
+                :should-show="item.shouldShow"
+                :key="item.id"
+                @change-link-visibility="
+                  () => (item.shouldShow = !item.shouldShow)
+                "
+                @delete-link="() => links.splice(links.indexOf(item), 1)"
+                :show-up="index > 0"
+                :show-down="index !== PreviewItems.length - 1"
+                @move-link-up="() => moveUp(index, item.type)"
+                @move-link-down="() => moveDown(index, item.type)"
               />
 
-              <div class="flex flex-col gap-8 mt-10">
-                <Icon
-                  :name="!header.shouldShow ? 'bi:toggle-off' : 'bi:toggle-on'"
-                  size="36"
-                  class="cursor-pointer transition-all duration-500 ease-in"
-                  @click="header.shouldShow = !header.shouldShow"
-                />
-                <Icon
-                  name="solar:trash-bin-trash-outline"
-                  size="24"
-                  class="cursor-pointer"
-                  @click="headers.splice(headers.indexOf(header), 1)"
-                />
-              </div>
-            </div>
+              <AddHeader
+                v-if="item.type === 'HEADER'"
+                :id="item.id"
+                v-model:value="item.title"
+                :key="item.id"
+                :should-show="item.shouldShow"
+                @change-header-visibility="
+                  () => (item.shouldShow = !item.shouldShow)
+                "
+                @delete-header="() => headers.splice(headers.indexOf(item), 1)"
+                :show-up="index > 0"
+                :show-down="index !== PreviewItems.length - 1"
+                @move-header-up="() => moveUp(index, item.type)"
+                @move-header-down="() => moveDown(index, item.type)"
+              />
+            </template>
           </div>
         </div>
       </div>
@@ -109,12 +102,17 @@
           </button>
           <p class="text-center text-lg">@dheeman</p>
         </div>
-        <div class="px-5" v-for="link in links">
+        <div class="px-5" v-for="item in PreviewItems">
+          <PreviewHeader
+            v-if="item.type === 'HEADER' && item.shouldShow"
+            :title="item.title"
+            :key="item.id"
+          />
           <PreviewLink
-            :link="link.url"
-            :title="link.title"
-            :key="link.id"
-            v-if="link.shouldShow"
+            v-if="item.type === 'LINK' && item.shouldShow"
+            :link="item.url"
+            :title="item.title"
+            :key="item.id"
           />
         </div>
       </div>
@@ -126,6 +124,10 @@ import AdminLayout from "~/layouts/AdminLayout.vue";
 import AddLink from "~/components/AddLink.vue";
 import LinkCard from "~/components/LinkCard.vue";
 import PreviewLink from "~/components/PreviewLink.vue";
+import PreviewHeader from "~/components/PreviewHeader.vue";
+import AddHeader from "~/components/AddHeader.vue";
+
+const emit = defineEmits();
 
 const showAddLink = ref(false);
 const headers = ref([]);
@@ -138,6 +140,7 @@ const createHeader = () => {
     id: new Date().getTime(),
     title: "",
     shouldShow: false,
+    type: "HEADER",
   });
 };
 const createLink = (url, title) => {
@@ -146,7 +149,37 @@ const createLink = (url, title) => {
     url: url,
     title: title,
     shouldShow: false,
+    type: "LINK",
   });
+};
+
+const PreviewItems = computed(() => {
+  return [...headers.value, ...links.value];
+});
+
+const moveUp = (index, type) => {
+  if (index > 0) {
+    swapItems(index, index - 1, type);
+  }
+};
+
+const moveDown = (index, type) => {
+  if (index < links.value.length - 1) {
+    swapItems(index, index + 1, type);
+  }
+};
+
+const swapItems = (index1, index2, type) => {
+  if (type === "LINK") {
+    const temp = links.value[index1];
+    links.value[index1] = links.value[index2];
+    links.value[index2] = temp;
+  }
+  if (type === "HEADER") {
+    const temp = headers.value[index1];
+    headers.value[index1] = headers.value[index2];
+    headers.value[index2] = temp;
+  }
 };
 </script>
 <style scoped></style>
