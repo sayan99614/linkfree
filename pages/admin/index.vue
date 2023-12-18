@@ -52,7 +52,7 @@
                 Add header
               </button>
             </div>
-            <template v-for="(item, index) in PreviewItems">
+            <template v-for="(item, index) in previewItems">
               <LinkCard
                 v-if="item.type === 'LINK'"
                 :id="item.id"
@@ -62,9 +62,11 @@
                 @change-link-visibility="
                   () => (item.shouldShow = !item.shouldShow)
                 "
-                @delete-link="() => links.splice(links.indexOf(item), 1)"
+                @delete-link="
+                  () => previewItems.splice(previewItems.indexOf(item), 1)
+                "
                 :show-up="index > 0"
-                :show-down="index !== PreviewItems.length - 1"
+                :show-down="index !== previewItems.length - 1"
                 @move-link-up="() => moveUp(index, item.type)"
                 @move-link-down="() => moveDown(index, item.type)"
               />
@@ -78,9 +80,11 @@
                 @change-header-visibility="
                   () => (item.shouldShow = !item.shouldShow)
                 "
-                @delete-header="() => headers.splice(headers.indexOf(item), 1)"
+                @delete-header="
+                  () => previewItems.splice(previewItems.indexOf(item), 1)
+                "
                 :show-up="index > 0"
-                :show-down="index !== PreviewItems.length - 1"
+                :show-down="index !== previewItems.length - 1"
                 @move-header-up="() => moveUp(index, item.type)"
                 @move-header-down="() => moveDown(index, item.type)"
               />
@@ -102,7 +106,7 @@
           </button>
           <p class="text-center text-lg">@dheeman</p>
         </div>
-        <div class="px-5" v-for="item in PreviewItems">
+        <div class="px-5 w-full text-center" v-for="item in previewItems">
           <PreviewHeader
             v-if="item.type === 'HEADER' && item.shouldShow"
             :title="item.title"
@@ -127,16 +131,19 @@ import PreviewLink from "~/components/PreviewLink.vue";
 import PreviewHeader from "~/components/PreviewHeader.vue";
 import AddHeader from "~/components/AddHeader.vue";
 
+definePageMeta({
+  middleware: "auth",
+});
+
 const emit = defineEmits();
 
 const showAddLink = ref(false);
-const headers = ref([]);
-const links = ref([]);
+const previewItems = ref([]);
 const changeLinkVisibility = () => {
   showAddLink.value = !showAddLink.value;
 };
 const createHeader = () => {
-  headers.value.push({
+  previewItems.value.push({
     id: new Date().getTime(),
     title: "",
     shouldShow: false,
@@ -144,7 +151,7 @@ const createHeader = () => {
   });
 };
 const createLink = (url, title) => {
-  links.value.push({
+  previewItems.value.push({
     id: new Date().getTime(),
     url: url,
     title: title,
@@ -153,10 +160,6 @@ const createLink = (url, title) => {
   });
 };
 
-const PreviewItems = computed(() => {
-  return [...headers.value, ...links.value];
-});
-
 const moveUp = (index, type) => {
   if (index > 0) {
     swapItems(index, index - 1, type);
@@ -164,21 +167,21 @@ const moveUp = (index, type) => {
 };
 
 const moveDown = (index, type) => {
-  if (index < links.value.length - 1) {
+  if (index < previewItems.value.length - 1) {
     swapItems(index, index + 1, type);
   }
 };
 
 const swapItems = (index1, index2, type) => {
   if (type === "LINK") {
-    const temp = links.value[index1];
-    links.value[index1] = links.value[index2];
-    links.value[index2] = temp;
+    const temp = previewItems.value[index1];
+    previewItems.value[index1] = previewItems.value[index2];
+    previewItems.value[index2] = temp;
   }
   if (type === "HEADER") {
-    const temp = headers.value[index1];
-    headers.value[index1] = headers.value[index2];
-    headers.value[index2] = temp;
+    const temp = previewItems.value[index1];
+    previewItems.value[index1] = previewItems.value[index2];
+    previewItems.value[index2] = temp;
   }
 };
 </script>

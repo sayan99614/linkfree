@@ -52,6 +52,10 @@ import AuthLayout from "~/layouts/AuthLayout.vue";
 import TextInput from "~/components/TextInput.vue";
 import InputValidator from "~/utils/Validator.js";
 
+definePageMeta({
+  middleware: "auth",
+});
+
 const email = ref({
   value: "",
   error: "",
@@ -61,7 +65,10 @@ const password = ref({
   error: "",
 });
 
-const loginSubmit = () => {
+const { loginUser } = useUserStore();
+const router = useRouter();
+
+const loginSubmit = async () => {
   const inputValidator = new InputValidator();
   email.value.error = inputValidator.validateEmail(email.value.value, {
     required: true,
@@ -69,10 +76,21 @@ const loginSubmit = () => {
   password.value.error = inputValidator.validatePassword(password.value.value, {
     required: true,
     minLength: 5,
-    maxLength: 8,
+    maxLength: 15,
   });
 
-  console.log(inputValidator.hasError);
+  if (!inputValidator.hasError) {
+    const user = {
+      email: email.value.value,
+      password: password.value.value,
+    };
+
+    const data = await loginUser(user);
+
+    if (data) {
+      router.replace("/admin");
+    }
+  }
 };
 </script>
 <style scoped></style>

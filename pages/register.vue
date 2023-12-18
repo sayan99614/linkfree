@@ -11,16 +11,24 @@
           type="text"
           placeholder="Username"
           :required="true"
-          v-model:value="email.value"
-          :error="email.error"
+          v-model:value="username.value"
+          :error="username.error"
         />
         <TextInput
           id="email"
           type="text"
           placeholder="Email"
           :required="true"
-          v-model:value="username.value"
-          :error="username.error"
+          v-model:value="email.value"
+          :error="email.error"
+        />
+        <TextInput
+          id="password"
+          type="password"
+          placeholder="enter password"
+          :required="true"
+          v-model:value="password.value"
+          :error="password.error"
         />
 
         <button
@@ -44,8 +52,15 @@
 </template>
 <script setup>
 import AuthLayout from "~/layouts/AuthLayout.vue";
-import TextInput from "~/assets/components/TextInput.vue";
+import TextInput from "~/components/TextInput.vue";
 import InputValidator from "~/utils/Validator.js";
+
+definePageMeta({
+  middleware: "auth",
+});
+
+const { registerUser } = useUserStore();
+const router = useRouter();
 
 const email = ref({
   value: "",
@@ -56,7 +71,12 @@ const username = ref({
   error: "",
 });
 
-const loginSubmit = () => {
+const password = ref({
+  value: "",
+  error: "",
+});
+
+const loginSubmit = async () => {
   const inputValidator = new InputValidator();
   email.value.error = inputValidator.validateEmail(email.value.value, {
     required: true,
@@ -66,8 +86,21 @@ const loginSubmit = () => {
     minLength: 5,
     maxLength: 15,
   });
+  password.value.error = inputValidator.validateText(password.value.value, {
+    required: true,
+    minLength: 8,
+    maxLength: 15,
+  });
 
-  console.log(inputValidator.hasError);
+  const data = await registerUser({
+    email: email.value.value,
+    username: username.value.value,
+    password: password.value.value,
+    role: "admin",
+  });
+  if (data) {
+    router.push("/admin");
+  }
 };
 </script>
 <style scoped></style>
