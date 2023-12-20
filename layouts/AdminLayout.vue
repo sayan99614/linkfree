@@ -69,6 +69,7 @@
       >
         <button
           class="flex gap-6 items-center hover:bg-gray-200 mx-2 p-2 mb-2 rounded-lg font-semibold"
+          @click="logoutUser"
         >
           <Icon name="ic:baseline-log-out" size="22" />
           <p>Logout</p>
@@ -194,5 +195,10 @@ watch(
     }
   }
 );
+
+const logoutUser = () => {
+  userStore.logoutUser();
+  router.replace("/");
+};
 </script>
 <style scoped></style>

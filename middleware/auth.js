@@ -2,21 +2,20 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   if (process.server) return;
 
   const { isAuthenticated, getUser } = useUserStore();
+  const user = await getUser();
 
   if (to.name === "admin" && !isAuthenticated) {
-    const user = await getUser();
-    console.log(user);
     if (user) {
       return navigateTo("/admin", { replace: true });
     }
     return navigateTo("/", { replace: true });
   }
 
-  if (to.name === "index" && isAuthenticated) {
+  if (to.name === "index" && user) {
     return navigateTo("/admin", { replace: true });
   }
 
-  if (to.name === "register" && isAuthenticated) {
+  if (to.name === "register" && user) {
     return navigateTo("/admin", { replace: true });
   }
 

@@ -9,6 +9,7 @@ export const useUserStore = defineStore("user", {
     id: null,
     colors: [],
     user: {},
+    token: "",
   }),
   actions: {
     async registerUser(user) {
@@ -29,6 +30,7 @@ export const useUserStore = defineStore("user", {
       try {
         const response = await api.post("/users/login", user);
         this.user = response.data.data;
+        this.token = response.data.token;
         localStorage.setItem("token", JSON.stringify(response.data.token));
         return response.data.data;
       } catch (error) {
@@ -50,7 +52,9 @@ export const useUserStore = defineStore("user", {
             )}`,
           },
         });
-        this.user = response.data.data;
+
+        this.user = response.data.data.data;
+        this.token = JSON.parse(localStorage.getItem("token"));
         return response.data.data;
       } catch (error) {
         return null;
@@ -59,6 +63,10 @@ export const useUserStore = defineStore("user", {
 
     async logoutUser() {
       this.user = {};
+      this.token = "";
+      if (localStorage.getItem("token")) {
+        localStorage.removeItem("token");
+      }
     },
   },
   getters: {
