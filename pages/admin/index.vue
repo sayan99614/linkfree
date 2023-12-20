@@ -3,29 +3,7 @@
     <AdminLayout>
       <div class="grid grid-cols-[70%_30%] h-screen scroll-auto">
         <div class="col-span-2 lg:col-span-1 border-r-[1px] border-r-gray-300">
-          <div
-            class="flex flex-col md:flex-row md:items-center items-start gap-2 md:justify-between md:rounded-2xl md:shadow-sm md:pl-6 pl-4 py-2 md:mx-10 bg-[#dfe8f9] md:mt-3"
-          >
-            <div class="flex items-center justify-between gap-3">
-              <Icon name="mdi:information-slab-circle-outline" size="22" />
-              <p class="font-medium">
-                Your linkfree url is live under:
-                <a class="border-b border-b-black font-light" href="#"
-                  >linkfree/dheeman</a
-                >
-              </p>
-            </div>
-            <div
-              class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ml-8 md:ml-0 md:mr-3"
-            >
-              <p>Share your Linktree to your socials</p>
-              <button
-                class="px-4 py-2 lg:px-6 lg:py-3 rounded-full border-2 bg-white border-gray-200 hover:bg-gray-200 text-center font-semibold"
-              >
-                Copy URL
-              </button>
-            </div>
-          </div>
+          <LinkBanner />
           <div class="flex items-center justify-center">
             <div
               class="flex flex-col gap-2 items-center mt-12 w-[60%] max-w-[60%]"
@@ -53,41 +31,84 @@
                   Add header
                 </button>
               </div>
-              <template v-for="(item, index) in previewItems">
+
+              <template v-for="(item, index) in items">
                 <LinkCard
-                  v-if="item.type === 'LINK'"
-                  :id="item.id"
-                  :link="item.url"
+                  v-if="item.itemType === 'Link'"
+                  :id="item._id"
+                  :link="item.link.url"
                   :should-show="item.shouldShow"
-                  :key="item.id"
+                  :key="item._id"
                   @change-link-visibility="
-                    () => (item.shouldShow = !item.shouldShow)
+                    () =>
+                      itemsStore.changeItemVisibility(
+                        item._id,
+                        !item.shouldShow
+                      )
                   "
-                  @delete-link="
-                    () => previewItems.splice(previewItems.indexOf(item), 1)
-                  "
+                  @delete-link="() => itemsStore.deleteItem(item._id)"
                   :show-up="index > 0"
-                  :show-down="index !== previewItems.length - 1"
-                  @move-link-up="() => moveUp(index, item.type)"
-                  @move-link-down="() => moveDown(index, item.type)"
+                  :show-down="index !== items.length - 1"
+                  @move-link-up="
+                    () =>
+                      itemsStore.moveItem(
+                        {
+                          id: item._id,
+                          position: item.position,
+                        },
+                        'up'
+                      )
+                  "
+                  @move-link-down="
+                    () =>
+                      itemsStore.moveItem(
+                        {
+                          id: item._id,
+                          position: item.position,
+                        },
+                        'down'
+                      )
+                  "
                 />
 
                 <AddHeader
-                  v-if="item.type === 'HEADER'"
-                  :id="item.id"
-                  v-model:value="item.title"
-                  :key="item.id"
+                  v-if="item.itemType === 'Header'"
+                  :id="item._id ? item._id : null"
+                  :is-new="!item._id"
+                  v-model:value="item.header.title"
+                  :key="item._id"
                   :should-show="item.shouldShow"
-                  @change-header-visibility="
-                    () => (item.shouldShow = !item.shouldShow)
-                  "
-                  @delete-header="
-                    () => previewItems.splice(previewItems.indexOf(item), 1)
-                  "
                   :show-up="index > 0"
-                  :show-down="index !== previewItems.length - 1"
-                  @move-header-up="() => moveUp(index, item.type)"
-                  @move-header-down="() => moveDown(index, item.type)"
+                  :show-down="index !== items.length - 1"
+                  @save-header="itemsStore.createItem(item)"
+                  @change-header-visibility="
+                    () =>
+                      itemsStore.changeItemVisibility(
+                        item._id,
+                        !item.shouldShow
+                      )
+                  "
+                  @delete-header="() => itemsStore.deleteItem(item._id)"
+                  @move-header-up="
+                    () =>
+                      itemsStore.moveItem(
+                        {
+                          id: item._id,
+                          position: item.position,
+                        },
+                        'up'
+                      )
+                  "
+                  @move-header-down="
+                    () =>
+                      itemsStore.moveItem(
+                        {
+                          id: item._id,
+                          position: item.position,
+                        },
+                        'down'
+                      )
+                  "
                 />
               </template>
             </div>
@@ -95,7 +116,7 @@
         </div>
 
         <div class="hidden lg:flex flex-col items-center">
-          <div class="mt-12">
+          <div class="mt-12 flex flex-col justify-center items-center">
             <button
               class="rounded-full border-2 border-spacing-12 p-0.5 border-white hover:border-sky-400"
             >
@@ -105,19 +126,19 @@
                 alt="profileImg"
               />
             </button>
-            <p class="text-center text-lg">@dheeman</p>
+            <p class="text-center text-lg">@{{ user.username }}</p>
           </div>
-          <div class="px-5 w-full text-center" v-for="item in previewItems">
+          <div class="px-5 w-full text-center" v-for="item in items">
             <PreviewHeader
-              v-if="item.type === 'HEADER' && item.shouldShow"
-              :title="item.title"
-              :key="item.id"
+              v-if="item.itemType === 'Header' && item.shouldShow"
+              :title="item.header.title"
+              :key="item._id"
             />
             <PreviewLink
-              v-if="item.type === 'LINK' && item.shouldShow"
-              :link="item.url"
-              :title="item.title"
-              :key="item.id"
+              v-if="item.itemType === 'Link' && item.shouldShow"
+              :link="item.link.url"
+              :title="item.link.title"
+              :key="item._id"
             />
           </div>
         </div>
@@ -132,6 +153,7 @@ import LinkCard from "~/components/LinkCard.vue";
 import PreviewLink from "~/components/PreviewLink.vue";
 import PreviewHeader from "~/components/PreviewHeader.vue";
 import AddHeader from "~/components/AddHeader.vue";
+import LinkBanner from "~/components/LinkBanner.vue";
 
 definePageMeta({
   middleware: "auth",
@@ -139,27 +161,40 @@ definePageMeta({
 
 const emit = defineEmits();
 
+const { user } = storeToRefs(useUserStore());
+const itemsStore = useItemsStore();
+
 const showAddLink = ref(false);
-const previewItems = ref([]);
+
+const { items } = storeToRefs(itemsStore);
+
+const previewItems = items.value;
+
 const changeLinkVisibility = () => {
   showAddLink.value = !showAddLink.value;
 };
 const createHeader = () => {
-  previewItems.value.push({
-    id: new Date().getTime(),
-    title: "",
+  items.value.push({
+    header: {
+      title: "",
+    },
     shouldShow: false,
-    type: "HEADER",
+    itemType: "Header",
+    position: items.value.length,
   });
 };
-const createLink = (url, title) => {
-  previewItems.value.push({
-    id: new Date().getTime(),
-    url: url,
-    title: title,
+const createLink = async (url, title) => {
+  await itemsStore.createItem({
+    link: {
+      url: url,
+      title: title,
+    },
     shouldShow: false,
-    type: "LINK",
+    itemType: "Link",
+    user: user.value._id,
+    position: items.value.length,
   });
+  showAddLink.value = false;
 };
 
 const moveUp = (index, type) => {
@@ -186,5 +221,9 @@ const swapItems = (index1, index2, type) => {
     previewItems.value[index2] = temp;
   }
 };
+
+onMounted(async () => {
+  await itemsStore.getAllItems();
+});
 </script>
 <style scoped></style>
