@@ -21,6 +21,11 @@ export default defineNuxtConfig({
   build: {
     transpile: ["pinia-plugin-persistedstate"],
   },
+  routeRules: {
+    "/api/v1/**": {
+      proxy: { to: "http://localhost:5000/api/v1/**" },
+    },
+  },
 
   app: {
     head: {
