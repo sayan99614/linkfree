@@ -1,145 +1,109 @@
 <template>
   <ClientOnly>
     <AdminLayout>
-      <div class="grid grid-cols-[70%_30%] h-screen scroll-auto">
-        <div class="col-span-2 lg:col-span-1 border-r-[1px] border-r-gray-300">
-          <LinkBanner />
-          <div class="flex items-center justify-center">
-            <div
-              class="flex flex-col gap-2 items-center mt-12 w-[60%] max-w-[60%]"
-            >
-              <button
-                class="text-center bg-[#8129d9] w-full py-3 rounded-full text-white hover:bg-[#6c1fc5] font-semibold"
-                @click="changeLinkVisibility"
-                v-if="!showAddLink"
-              >
-                Add link
-              </button>
-
-              <AddLink
-                v-show="showAddLink"
-                @change-link-visibility="changeLinkVisibility"
-                @create-link-url="createLink"
-              />
-
-              <div class="self-start">
-                <button
-                  class="flex gap-3 bg-gray-200 w-full py-3 rounded-full px-8"
-                  @click="createHeader"
-                >
-                  <Icon name="fe:laptop" class="rotate-180" size="24" />
-                  Add header
-                </button>
-              </div>
-
-              <template v-for="(item, index) in items">
-                <LinkCard
-                  v-if="item.itemType === 'Link'"
-                  :id="item._id"
-                  :link="item.link.url"
-                  :should-show="item.shouldShow"
-                  :key="item._id"
-                  @change-link-visibility="
-                    () =>
-                      itemsStore.changeItemVisibility(
-                        item._id,
-                        !item.shouldShow
-                      )
-                  "
-                  @delete-link="() => itemsStore.deleteItem(item._id)"
-                  :show-up="index > 0"
-                  :show-down="index !== items.length - 1"
-                  @move-link-up="
-                    () =>
-                      itemsStore.moveItem(
-                        {
-                          id: item._id,
-                          position: item.position,
-                        },
-                        'up'
-                      )
-                  "
-                  @move-link-down="
-                    () =>
-                      itemsStore.moveItem(
-                        {
-                          id: item._id,
-                          position: item.position,
-                        },
-                        'down'
-                      )
-                  "
-                />
-
-                <AddHeader
-                  v-if="item.itemType === 'Header'"
-                  :id="item._id ? item._id : null"
-                  :is-new="!item._id"
-                  v-model:value="item.header.title"
-                  :key="item._id"
-                  :should-show="item.shouldShow"
-                  :show-up="index > 0"
-                  :show-down="index !== items.length - 1"
-                  @save-header="itemsStore.createItem(item)"
-                  @change-header-visibility="
-                    () =>
-                      itemsStore.changeItemVisibility(
-                        item._id,
-                        !item.shouldShow
-                      )
-                  "
-                  @delete-header="() => itemsStore.deleteItem(item._id)"
-                  @move-header-up="
-                    () =>
-                      itemsStore.moveItem(
-                        {
-                          id: item._id,
-                          position: item.position,
-                        },
-                        'up'
-                      )
-                  "
-                  @move-header-down="
-                    () =>
-                      itemsStore.moveItem(
-                        {
-                          id: item._id,
-                          position: item.position,
-                        },
-                        'down'
-                      )
-                  "
-                />
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div class="hidden lg:flex flex-col items-center">
-          <div class="mt-12 flex flex-col justify-center items-center">
+      <div class="col-span-2 lg:col-span-1 border-r-[1px] border-r-gray-300">
+        <LinkBanner />
+        <div class="flex items-center justify-center">
+          <div
+            class="flex flex-col gap-2 items-center mt-12 w-[60%] max-w-[60%]"
+          >
             <button
-              class="rounded-full border-2 border-spacing-12 p-0.5 border-white hover:border-sky-400"
+              class="text-center bg-[#8129d9] w-full py-3 rounded-full text-white hover:bg-[#6c1fc5] font-semibold"
+              @click="changeLinkVisibility"
+              v-if="!showAddLink"
             >
-              <img
-                src="https://picsum.photos/300/300"
-                class="rounded-full min-w-[90px] w-[80px]"
-                alt="profileImg"
-              />
+              Add link
             </button>
-            <p class="text-center text-lg">@{{ user.username }}</p>
-          </div>
-          <div class="px-5 w-full text-center" v-for="item in items">
-            <PreviewHeader
-              v-if="item.itemType === 'Header' && item.shouldShow"
-              :title="item.header.title"
-              :key="item._id"
+
+            <AddLink
+              v-show="showAddLink"
+              @change-link-visibility="changeLinkVisibility"
+              @create-link-url="createLink"
             />
-            <PreviewLink
-              v-if="item.itemType === 'Link' && item.shouldShow"
-              :link="item.link.url"
-              :title="item.link.title"
-              :key="item._id"
-            />
+
+            <div class="self-start">
+              <button
+                class="flex gap-3 bg-gray-200 w-full py-3 rounded-full px-8"
+                @click="createHeader"
+              >
+                <Icon name="fe:laptop" class="rotate-180" size="24" />
+                Add header
+              </button>
+            </div>
+
+            <template v-for="(item, index) in items">
+              <LinkCard
+                v-if="item.itemType === 'Link'"
+                :id="item._id"
+                :link="item.link.url"
+                :should-show="item.shouldShow"
+                :key="item._id"
+                @change-link-visibility="
+                  () =>
+                    itemsStore.changeItemVisibility(item._id, !item.shouldShow)
+                "
+                @delete-link="() => itemsStore.deleteItem(item._id)"
+                :show-up="index > 0"
+                :show-down="index !== items.length - 1"
+                @move-link-up="
+                  () =>
+                    itemsStore.moveItem(
+                      {
+                        id: item._id,
+                        position: item.position,
+                      },
+                      'up'
+                    )
+                "
+                @move-link-down="
+                  () =>
+                    itemsStore.moveItem(
+                      {
+                        id: item._id,
+                        position: item.position,
+                      },
+                      'down'
+                    )
+                "
+              />
+
+              <AddHeader
+                v-if="item.itemType === 'Header'"
+                :id="item._id ? item._id : null"
+                :is-new="!item._id"
+                v-model:value="item.header.title"
+                :key="item._id"
+                :should-show="item.shouldShow"
+                :show-up="index > 0"
+                :show-down="index !== items.length - 1"
+                @save-header="itemsStore.createItem(item)"
+                @change-header-visibility="
+                  () =>
+                    itemsStore.changeItemVisibility(item._id, !item.shouldShow)
+                "
+                @delete-header="() => itemsStore.deleteItem(item._id)"
+                @move-header-up="
+                  () =>
+                    itemsStore.moveItem(
+                      {
+                        id: item._id,
+                        position: item.position,
+                      },
+                      'up'
+                    )
+                "
+                @move-header-down="
+                  () =>
+                    itemsStore.moveItem(
+                      {
+                        id: item._id,
+                        position: item.position,
+                      },
+                      'down'
+                    )
+                "
+              />
+            </template>
           </div>
         </div>
       </div>
@@ -150,8 +114,7 @@
 import AdminLayout from "~/layouts/AdminLayout.vue";
 import AddLink from "~/components/AddLink.vue";
 import LinkCard from "~/components/LinkCard.vue";
-import PreviewLink from "~/components/PreviewLink.vue";
-import PreviewHeader from "~/components/PreviewHeader.vue";
+
 import AddHeader from "~/components/AddHeader.vue";
 import LinkBanner from "~/components/LinkBanner.vue";
 
@@ -167,8 +130,6 @@ const itemsStore = useItemsStore();
 const showAddLink = ref(false);
 
 const { items } = storeToRefs(itemsStore);
-
-const previewItems = items.value;
 
 const changeLinkVisibility = () => {
   showAddLink.value = !showAddLink.value;
@@ -195,31 +156,6 @@ const createLink = async (url, title) => {
     position: items.value.length,
   });
   showAddLink.value = false;
-};
-
-const moveUp = (index, type) => {
-  if (index > 0) {
-    swapItems(index, index - 1, type);
-  }
-};
-
-const moveDown = (index, type) => {
-  if (index < previewItems.value.length - 1) {
-    swapItems(index, index + 1, type);
-  }
-};
-
-const swapItems = (index1, index2, type) => {
-  if (type === "LINK") {
-    const temp = previewItems.value[index1];
-    previewItems.value[index1] = previewItems.value[index2];
-    previewItems.value[index2] = temp;
-  }
-  if (type === "HEADER") {
-    const temp = previewItems.value[index1];
-    previewItems.value[index1] = previewItems.value[index2];
-    previewItems.value[index2] = temp;
-  }
 };
 
 onMounted(async () => {

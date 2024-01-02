@@ -26,6 +26,8 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "firebase": "^10.7.1",
+    "h3-formidable": "^1.0.0",
     "pinia": "^2.1.7"
   }
 }

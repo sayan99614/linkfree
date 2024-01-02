@@ -23,7 +23,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     "/api/v1/**": {
-      proxy: { to: "http://localhost:5000/api/v1/**" },
+      proxy: { to: "http://192.168.0.112:5000/api/v1/**" },
     },
   },
 

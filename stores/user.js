@@ -20,7 +20,11 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("token", JSON.stringify(response.data.token));
         return response.data.data;
       } catch (error) {
-        alert(error.response.data.message);
+        if (error && error.response) {
+          alert(error.response.data.message);
+        } else {
+          alert("Something went wrong please try again");
+        }
         return null;
       }
     },
@@ -34,7 +38,11 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("token", JSON.stringify(response.data.token));
         return response.data.data;
       } catch (error) {
-        alert(error.response.data.message);
+        if (error && error.response) {
+          alert(error.response.data.message);
+        } else {
+          alert("Something went wrong please try again");
+        }
         return null;
       }
     },
@@ -55,6 +63,31 @@ export const useUserStore = defineStore("user", {
 
         this.user = response.data.data.data;
         this.token = JSON.parse(localStorage.getItem("token"));
+        return response.data.data;
+      } catch (error) {
+        return null;
+      }
+    },
+
+    async updateUser(user) {
+      console.log(user);
+      const api = useApi();
+      const { token } = useUserStore();
+      try {
+        if (!token) {
+          throw new Error("Invalid session please login again");
+        }
+        const response = await api.patch("/users/updateMe", user, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(response);
+
+        this.user = response.data.data.data;
+
+        await this.getUser();
         return response.data.data;
       } catch (error) {
         return null;

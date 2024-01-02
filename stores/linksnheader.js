@@ -94,5 +94,22 @@ export const useItemsStore = defineStore("linksnheaders", {
         alert(error);
       }
     },
+
+    async getItemByUsername(username) {
+      try {
+        const api = useApi();
+        const { token } = useUserStore();
+        const response = await api.get(`/itemsPreview/${username}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        this.items = response.data.data.items;
+        return response.data.data.items;
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    },
   },
 });
