@@ -70,7 +70,6 @@ export const useUserStore = defineStore("user", {
     },
 
     async updateUser(user) {
-      console.log(user);
       const api = useApi();
       const { token } = useUserStore();
       try {
@@ -84,11 +83,8 @@ export const useUserStore = defineStore("user", {
         });
 
         console.log(response);
-
-        this.user = response.data.data.data;
-
-        await this.getUser();
-        return response.data.data;
+        this.user = response.data.data.user;
+        return response.data.data.user;
       } catch (error) {
         return null;
       }

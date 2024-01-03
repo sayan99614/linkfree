@@ -67,12 +67,10 @@ const handleFileUpload = async (e) => {
   }
 };
 
-const uploadFile = () => {
+const uploadFile = async () => {
   try {
-    saveFile(file.value).then((res) => res).then((resp)=>{
-      updateUser({ photo: resp });
-    });
-    
+    const url = await saveFile(file.value, "profile");
+    await updateUser({ photo: url });
   } catch (error) {
     alert(error.message);
   }

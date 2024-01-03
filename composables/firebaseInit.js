@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 
-import { ref, getStorage, uploadBytes,getDownloadURL } from "firebase/storage";
+import { ref, getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -25,11 +25,10 @@ export const saveFile = async (file) => {
     const storage = useFireBaseStorage();
     const imageRef = ref(storage, "images/" + file.name);
 
-    uploadBytes(imageRef, file).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((downloadURL) => {
-       return downloadURL;
-      });
-    });
+    const snapshot = await uploadBytes(imageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    return downloadURL;
   } catch (error) {
     return new Error("Can't upload image at this moment");
   }
