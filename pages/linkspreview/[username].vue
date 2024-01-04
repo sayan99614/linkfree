@@ -5,8 +5,8 @@
         class="rounded-full border-2 border-spacing-12 p-0.5 border-white hover:border-sky-400"
       >
         <img
-          src="https://picsum.photos/300/300"
-          class="rounded-full min-w-[140px] w-[140px]"
+          :src="user.photo ? user.photo : 'https://picsum.photos/300/300'"
+          class="rounded-full min-w-[140px] w-[140px] h-[140px]"
           alt="profileImg"
         />
       </button>
@@ -43,8 +43,11 @@ const {
 const { getItemByUsername } = useItemsStore();
 
 const { items } = storeToRefs(useItemsStore());
+const userStore=useUserStore()
+const {user}=storeToRefs(userStore)
 
 onMounted(async () => {
+  await userStore.getuserByUsername(username)
   await getItemByUsername(username);
 });
 </script>

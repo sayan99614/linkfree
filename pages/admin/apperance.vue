@@ -15,7 +15,7 @@
                   :src="
                     user.photo ? user.photo : 'https://picsum.photos/300/300'
                   "
-                  class="rounded-full min-w-[120px] w-[120px]"
+                  class="rounded-full min-w-[120px] w-[120px] h-[120px]"
                   alt="profileImg"
                 />
               </button>
