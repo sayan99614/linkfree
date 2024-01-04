@@ -56,8 +56,8 @@
             @click="() => (!isTopNav ? openMenu('TopNav') : (isTopNav = false))"
           >
             <img
-              src="https://picsum.photos/300/300"
-              class="rounded-full min-w-[40px] w-[40px]"
+              :src="user.photo ? user.photo : 'https://picsum.photos/300/300'"
+              class="rounded-full min-w-[40px] w-[40px] h-[40px]"
               alt="profileImg"
             />
           </button>
@@ -111,7 +111,7 @@
           >
             <img
               :src="user.photo ? user.photo : 'https://picsum.photos/300/300'"
-              class="rounded-full min-w-[90px] w-[80px]"
+              class="rounded-full min-w-[90px] w-[80px] h-[85px]"
               alt="profileImg"
             />
           </button>
@@ -214,12 +214,6 @@ const openMenu = (menu) => {
   }
 };
 
-onMounted(() => {
-  window.addEventListener("resize", () => {
-    windowWidth.value = window.innerWidth;
-  });
-});
-
 watch(
   () => windowWidth.value,
   () => {
@@ -235,6 +229,7 @@ const logoutUser = () => {
 };
 
 onMounted(async () => {
+  await userStore.getUser();
   await itemsStore.getAllItems();
 });
 </script>

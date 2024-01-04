@@ -90,6 +90,18 @@ export const useUserStore = defineStore("user", {
       }
     },
 
+    async getuserByUsername(username) {
+      const api = useApi();
+      try {
+        const response = await api.get(`/users/getuserbyusername/${username}`);
+        this.user = response.data.data.user;
+
+        return response.data.data.user;
+      } catch (error) {
+        return null;
+      }
+    },
+
     async logoutUser() {
       this.user = {};
       this.token = "";

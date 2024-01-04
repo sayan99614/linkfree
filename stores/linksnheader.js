@@ -10,12 +10,15 @@ export const useItemsStore = defineStore("linksnheaders", {
     async getAllItems() {
       try {
         const api = useApi();
-        const { token } = useUserStore();
-        const response = await api.get("/items?sort=position", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const { token, user } = useUserStore();
+        const response = await api.get(
+          `/items?user=${user._id}&sort=position`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         this.items = response.data.data.data;
       } catch (error) {
@@ -45,7 +48,7 @@ export const useItemsStore = defineStore("linksnheaders", {
       try {
         const api = useApi();
         const { token } = useUserStore();
-        const response = await api.delete(`/items/${id}`, {
+        await api.delete(`/items/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -53,6 +56,7 @@ export const useItemsStore = defineStore("linksnheaders", {
         await this.getAllItems();
         alert("deleted successfully!");
       } catch (error) {
+        console.log(error);
         alert(error.response.data.message);
       }
     },
